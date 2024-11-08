@@ -10,13 +10,13 @@
             margin: 0;
             padding: 0;
             height: 100%;
-            overflow: hidden; /* Evita el desplazamiento */
+            overflow: none; /* Evita el desplazamiento */
         }
 
         body {
             font-family: 'Arial', sans-serif;
             text-align: center;
-            background-size: cover; /* Asegura que la imagen cubra toda la pantalla */
+            background-size: no-repeat; /* Asegura que la imagen cubra toda la pantalla */
             background-position: center; /* Centra la imagen */
             background-repeat: no-repeat;
             transition: background-image 1s ease-in-out;
@@ -295,7 +295,7 @@
         function verificarHora(persona) {
             const password = document.getElementById('password').value;
             const ahora = new Date();
-            const fechaAike = new Date('2024-11-08T00:30:00');
+            const fechaAike = new Date('2024-11-08T23:30:00');
             const fechaNico = new Date('2024-11-09T00:00:00');
 
             if (password === '20402092') {
