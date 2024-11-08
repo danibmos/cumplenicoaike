@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feliz Cumpleaños Aike y Nico</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background-color: #f0f8ff;
+        }
+        h1 {
+            color: #ff69b4;
+        }
+        .carta {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            border: 2px dashed #8a2be2;
+            border-radius: 10px;
+            background-color: #e6e6fa;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #ff4500;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #ff6347;
+        }
+        #mensajeError {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #ffcccb;
+            border: 2px solid #ff0000;
+            border-radius: 10px;
+            z-index: 1000;
+        }
+        #mensajeError button {
+            margin-top: 10px;
+            background-color: #ff4500;
+        }
+        #password {
+            margin-top: 20px;
+            padding: 10px;
+            border: 2px solid #8a2be2;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 300px;
+        }
+        button.developer-mode {
+            margin-top: 20px;
+            padding: 5px 10px;
+            font-size: 14px;
+            color: white;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button.developer-mode:hover {
+            background-color: #45a049;
+        }
+        .cerrar-boton {
+            background-color: transparent;
+            color: red;
+            border: 2px solid red;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            line-height: 0;
+            transition: background-color 0.3s;
+        }
+        .cerrar-boton:hover {
+            background-color: red;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Feliz Cumpleaños Aike y Nico</h1>
+
+    <div>
+        <button onclick="verificarHora('Aike')">Ver Carta de Aike</button>
+        <button onclick="verificarHora('Nico')">Ver Carta de Nico</button>
+    </div>
+
+    <button class="developer-mode" onclick="togglePasswordField()">Modo Desarrollador</button>
+    <div id="passwordContainer" style="display: none;">
+        <input type="password" id="password" placeholder="Introduce la contraseña">
+    </div>
+
+    <div id="cartaAike" class="carta">
+        <h2>Carta para Aike <span class="cerrar-boton" onclick="cerrarCarta('Aike')">&times;</span></h2>
+        <iframe src="prueba_aike.pdf" width="100%" height="400px"></iframe>
+        <a href="prueba_aike.pdf" download>Descargar PDF</a>
+    </div>
+
+    <div id="cartaNico" class="carta">
+        <h2>Carta para Nico <span class="cerrar-boton" onclick="cerrarCarta('Nico')">&times;</span></h2>
+        <iframe src="prueba_nico.pdf" width="100%" height="400px"></iframe>
+        <a href="prueba_nico.pdf" download>Descargar PDF</a>
+    </div>
+
+    <div id="mensajeError">
+        <p id="textoError"></p>
+        <p id="cuentaAtras"></p>
+        <button onclick="cerrarMensajeError()">Cerrar</button>
+    </div>
+
+    <script>
+        const mensajesError = [
+            "Ey ey ey, ¿a dónde vas? Aún no es la hora, querid@.",
+            "¡Paciencia! Todavía no es el momento.",
+            "¡Ups! Parece que te has adelantado un poco.",
+            "¡Espera un poco más, la sorpresa aún no está lista!",
+            "¡Tranquilo! Todo llega a su debido tiempo.",
+            "¡No tan rápido! La magia aún está en preparación.",
+            "¡Cuidado! Podrías romper el espacio-tiempo.",
+            "¡Hey! La curiosidad mató al gato, pero la satisfacción lo revivió.",
+            "¡Oops! Parece que el reloj no está de tu lado.",
+            "¡Aún no! La paciencia es una virtud.",
+            "¡Vaya! Parece que alguien está ansioso.",
+            "¡Espera! La anticipación es parte de la diversión.",
+            "¡No te apresures! Lo bueno se hace esperar.",
+            "¡Detente! La sorpresa aún está en el horno.",
+            "¡Calma! Todo a su debido tiempo.",
+            "¡Hey! La impaciencia no es amiga de la sorpresa.",
+            "¡Oops! Parece que el tiempo no corre a tu favor.",
+            "¡Espera un poco más! La espera valdrá la pena.",
+            "¡No tan rápido! La sorpresa aún está en camino.",
+            "¡Tranquilo! La paciencia es la madre de todas las ciencias.",
+            "¡Hey! La sorpresa aún no está lista para ser revelada.",
+            "¡Oops! Parece que te has adelantado al futuro.",
+            "¡Espera! La sorpresa aún está en proceso.",
+            "¡No te apresures! La espera es parte de la emoción.",
+            "¡Detente! La sorpresa aún está en construcción."
+        ];
+
+        let cuentaAtrasInterval;
+
+        function mostrarError(fechaLimite) {
+            const mensaje = mensajesError[Math.floor(Math.random() * mensajesError.length)];
+            document.getElementById('textoError').innerText = mensaje;
+            document.getElementById('mensajeError').style.display = 'block';
+
+            clearInterval(cuentaAtrasInterval); // Limpiar cualquier intervalo previo
+
+            cuentaAtrasInterval = setInterval(() => {
+                const ahora = new Date();
+                const tiempoRestante = fechaLimite - ahora;
+
+                if (tiempoRestante <= 0) {
+                    clearInterval(cuentaAtrasInterval);
+                    document.getElementById('cuentaAtras').innerText = "¡Ya puedes abrir la carta!";
+                } else {
+                    const horas = Math.floor((tiempoRestante % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutos = Math.floor((tiempoRestante % (1000 * 60 * 60)) / (1000 * 60));
+                    const segundos = Math.floor((tiempoRestante % (1000 * 60)) / 1000);
+                    document.getElementById('cuentaAtras').innerText = `Tiempo restante: ${horas}h ${minutos}m ${segundos}s`;
+                }
+            }, 1000);
+        }
+
+        function cerrarMensajeError() {
+            document.getElementById('mensajeError').style.display = 'none';
+            clearInterval(cuentaAtrasInterval); // Detener la cuenta atrás al cerrar el mensaje
+        }
+
+        function verificarHora(persona) {
+            const password = document.getElementById('password').value;
+            const ahora = new Date();
+            const fechaAike = new Date('2024-11-08T23:00:00');
+            const fechaNico = new Date('2024-11-09T00:00:00');
+
+            if (password === 'abc123') {
+                document.getElementById(`carta${persona}`).style.display = 'block';
+                document.getElementById('mensajeError').style.display = 'none';
+            } else if (persona === 'Aike' && ahora < fechaAike) {
+                mostrarError(fechaAike);
+            } else if (persona === 'Nico' && ahora < fechaNico) {
+                mostrarError(fechaNico);
+            } else {
+                document.getElementById(`carta${persona}`).style.display = 'block';
+            }
+            // Cerrar la otra carta
+            const otraPersona = persona === 'Aike' ? 'Nico' : 'Aike';
+            document.getElementById(`carta${otraPersona}`).style.display = 'none';
+        }
+
+        function cerrarCarta(persona) {
+            document.getElementById(`carta${persona}`).style.display = 'none';
+        }
+
+        function togglePasswordField() {
+            const passwordContainer = document.getElementById('passwordContainer');
+            if (passwordContainer.style.display === 'none') {
+                passwordContainer.style.display = 'block';
+            } else {
+                passwordContainer.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
