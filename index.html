@@ -108,14 +108,18 @@
 
     <div id="cartaAike" class="carta">
         <h2>Carta para Aike <span class="cerrar-boton" onclick="cerrarCarta('Aike')">&times;</span></h2>
-        <iframe src="prueba_aike.pdf" width="100%" height="400px"></iframe>
-        <a href="prueba_aike.pdf" download>Descargar PDF</a>
+        <div class="pdf-container">
+            <iframe src="prueba_aike.pdf" style="border: none; width: 100%; height: 80vh; max-height: 600px; border-radius: 10px;"></iframe>
+        </div>
+        <a href="prueba_aike.pdf" download class="descargar-btn">Descargar PDF</a>
     </div>
 
     <div id="cartaNico" class="carta">
         <h2>Carta para Nico <span class="cerrar-boton" onclick="cerrarCarta('Nico')">&times;</span></h2>
-        <iframe src="prueba_nico.pdf" width="100%" height="400px"></iframe>
-        <a href="prueba_nico.pdf" download>Descargar PDF</a>
+        <div class="pdf-container">
+            <iframe src="./pdf/niko.pdf" style="border: none; width: 100%; height: 80vh; max-height: 600px; border-radius: 10px;"></iframe>
+        </div>
+        <a href="./pdf/niko.pdf" download class="descargar-btn">Descargar PDF</a>
     </div>
 
     <div id="mensajeError">
@@ -173,7 +177,7 @@
                     const horas = Math.floor((tiempoRestante % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                     const minutos = Math.floor((tiempoRestante % (1000 * 60 * 60)) / (1000 * 60));
                     const segundos = Math.floor((tiempoRestante % (1000 * 60)) / 1000);
-                    document.getElementById('cuentaAtras').innerText = `Tiempo restante: ${horas}h ${minutos}m ${segundos}s`;
+                    document.getElementById('cuentaAtras').innerText = `Tiempo restante para abrir la carta: ${horas}h ${minutos}m ${segundos}s`;
                 }
             }, 1000);
         }
@@ -189,7 +193,7 @@
             const fechaAike = new Date('2024-11-08T23:00:00');
             const fechaNico = new Date('2024-11-09T00:00:00');
 
-            if (password === 'abc123') {
+            if (password === '20402092') {
                 document.getElementById(`carta${persona}`).style.display = 'block';
                 document.getElementById('mensajeError').style.display = 'none';
             } else if (persona === 'Aike' && ahora < fechaAike) {
