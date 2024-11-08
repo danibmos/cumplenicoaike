@@ -1,40 +1,79 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Feliz Cumpleaños Aike y Nico</title>
     <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden; /* Evita el desplazamiento */
+        }
+
         body {
-            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-family: 'Arial', sans-serif;
             text-align: center;
-            margin: 20px;
-            background-color: #f0f8ff;
+            background-size: contain; /* Asegura que la imagen se vea completa */
+            background-position: center; /* Centra la imagen */
+            background-repeat: no-repeat;
+            transition: background-image 1s ease-in-out;
+            color: #333;
+            position: relative;
         }
+
+        /* Superposición blanca semitransparente */
+        .overlay {
+            position: fixed; /* Asegura que la capa cubra toda la pantalla */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.5); /* Ajusta la opacidad según sea necesario */
+            z-index: 1;
+        }
+
         h1 {
-            color: #ff69b4;
+            color: #333;
+            font-size: 2.5em;
+            margin-top: 20px;
+            position: relative;
+            z-index: 2;
         }
+
         .carta {
             display: none;
-            margin-top: 20px;
+            margin: 20px auto;
             padding: 20px;
-            border: 2px dashed #8a2be2;
+            max-width: 600px;
+            border: 1px solid #ddd;
             border-radius: 10px;
-            background-color: #e6e6fa;
+            background-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 2;
         }
+
         button {
             margin: 10px;
             padding: 10px 20px;
             font-size: 16px;
             color: white;
-            background-color: #ff4500;
+            background-color: #007BFF;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            transition: background-color 0.3s;
+            position: relative;
+            z-index: 2;
         }
+
         button:hover {
-            background-color: #ff6347;
+            background-color: #0056b3;
         }
+
         #mensajeError {
             display: none;
             position: fixed;
@@ -47,10 +86,12 @@
             border-radius: 10px;
             z-index: 1000;
         }
+
         #mensajeError button {
             margin-top: 10px;
             background-color: #ff4500;
         }
+
         #password {
             margin-top: 20px;
             padding: 10px;
@@ -59,6 +100,7 @@
             width: 80%;
             max-width: 300px;
         }
+
         button.developer-mode {
             margin-top: 20px;
             padding: 5px 10px;
@@ -69,9 +111,11 @@
             border-radius: 5px;
             cursor: pointer;
         }
+
         button.developer-mode:hover {
             background-color: #45a049;
         }
+
         .cerrar-boton {
             background-color: transparent;
             color: red;
@@ -87,13 +131,16 @@
             line-height: 0;
             transition: background-color 0.3s;
         }
+
         .cerrar-boton:hover {
             background-color: red;
             color: white;
         }
     </style>
 </head>
+
 <body>
+    <div class="overlay"></div>
     <h1>Feliz Cumpleaños Aike y Nico</h1>
 
     <div>
@@ -109,7 +156,8 @@
     <div id="cartaAike" class="carta">
         <h2>Carta para Aike <span class="cerrar-boton" onclick="cerrarCarta('Aike')">&times;</span></h2>
         <div class="pdf-container">
-            <iframe src="prueba_aike.pdf" style="border: none; width: 100%; height: 80vh; max-height: 600px; border-radius: 10px;"></iframe>
+            <iframe src="./pdf/aike.pdf"
+                style="border: none; width: 100%; height: 80vh; max-height: 600px; border-radius: 10px;"></iframe>
         </div>
         <a href="prueba_aike.pdf" download class="descargar-btn">Descargar PDF</a>
     </div>
@@ -117,7 +165,8 @@
     <div id="cartaNico" class="carta">
         <h2>Carta para Nico <span class="cerrar-boton" onclick="cerrarCarta('Nico')">&times;</span></h2>
         <div class="pdf-container">
-            <iframe src="./pdf/niko.pdf" style="border: none; width: 100%; height: 80vh; max-height: 600px; border-radius: 10px;"></iframe>
+            <iframe src="./pdf/niko.pdf"
+                style="border: none; width: 100%; height: 80vh; max-height: 600px; border-radius: 10px;"></iframe>
         </div>
         <a href="./pdf/niko.pdf" download class="descargar-btn">Descargar PDF</a>
     </div>
@@ -126,6 +175,14 @@
         <p id="textoError"></p>
         <p id="cuentaAtras"></p>
         <button onclick="cerrarMensajeError()">Cerrar</button>
+    </div>
+
+    <div id="mensajePassword" style="display: none;">
+        <p>Introduce la contraseña para abrir la carta:</p>
+        <input type="password" id="inputPassword" placeholder="Introduce la contraseña">
+        <button onclick="verificarPassword()">Enviar</button>
+        <button onclick="cerrarMensajePassword()">Cerrar</button>
+        <p id="textoPasswordError" style="color: red;"></p>
     </div>
 
     <script>
@@ -158,6 +215,7 @@
         ];
 
         let cuentaAtrasInterval;
+        let personaActual = '';
 
         function mostrarError(fechaLimite) {
             const mensaje = mensajesError[Math.floor(Math.random() * mensajesError.length)];
@@ -190,7 +248,7 @@
         function verificarHora(persona) {
             const password = document.getElementById('password').value;
             const ahora = new Date();
-            const fechaAike = new Date('2024-11-08T23:00:00');
+            const fechaAike = new Date('2024-11-08T00:30:00');
             const fechaNico = new Date('2024-11-09T00:00:00');
 
             if (password === '20402092') {
@@ -201,9 +259,9 @@
             } else if (persona === 'Nico' && ahora < fechaNico) {
                 mostrarError(fechaNico);
             } else {
-                document.getElementById(`carta${persona}`).style.display = 'block';
+                personaActual = persona;
+                document.getElementById('mensajePassword').style.display = 'block';
             }
-            // Cerrar la otra carta
             const otraPersona = persona === 'Aike' ? 'Nico' : 'Aike';
             document.getElementById(`carta${otraPersona}`).style.display = 'none';
         }
@@ -220,6 +278,51 @@
                 passwordContainer.style.display = 'none';
             }
         }
+
+        function verificarPassword() {
+            const inputPassword = document.getElementById('inputPassword').value;
+            const contrasenaAike = '6072';
+            const contrasenaNico = '7585';
+
+            if ((personaActual === 'Aike' && inputPassword === contrasenaAike) ||
+                (personaActual === 'Nico' && inputPassword === contrasenaNico)) {
+                document.getElementById(`carta${personaActual}`).style.display = 'block';
+                cerrarMensajePassword();
+            } else {
+                document.getElementById('textoPasswordError').innerText = personaActual + " Revisa tu código e inténtalo de nuevo.";
+            }
+        }
+
+        function cerrarMensajePassword() {
+            document.getElementById('mensajePassword').style.display = 'none';
+            document.getElementById('textoPasswordError').innerText = '';
+        }
+
+        const images = [
+            './img/img1.jpeg',
+            './img/img2.jpeg',
+            './img/img3.jpeg',
+            './img/img4.jpeg',
+            './img/img5.jpeg',
+            './img/img6.jpeg',
+            './img/img7.jpeg',
+            './img/img8.jpeg',
+            './img/img9.jpeg',
+            './img/img10.jpeg',
+            './img/img11.jpeg',
+            './img/img12.jpeg',
+            './img/img13.jpeg',
+            './img/img14.jpeg'
+        ];
+
+        function changeBackgroundImage() {
+            const randomImage = images[Math.floor(Math.random() * images.length)];
+            document.body.style.backgroundImage = `url(${randomImage})`;
+        }
+
+        setInterval(changeBackgroundImage, 5000); // Cambia la imagen cada 5 segundos
+        changeBackgroundImage(); // Cambia la imagen al cargar la página
     </script>
 </body>
+
 </html>
